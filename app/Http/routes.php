@@ -10,12 +10,6 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
 Route::auth();
 
 Route::group(['prefix' => 'dashboard'], function () {
@@ -31,3 +25,11 @@ Route::group(['prefix' => 'dashboard'], function () {
 
     Route::get('/deletePage/{id}', 'Admin\PageController@destroy')->name('deletePage');
 });
+
+Route::get('/', function () {
+    return redirect('/Home');
+});
+
+Route::get('/{name}', 'Site\PageController@show');
+
+

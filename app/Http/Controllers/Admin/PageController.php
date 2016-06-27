@@ -10,6 +10,15 @@ use App\Models\Page;
 class PageController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -37,14 +46,16 @@ class PageController extends Controller
      */
     public function store(Request $request)
     {
+
+        $this->validate($request, [
+            'url' => 'required|unique:pages|max:255'
+        ]);
+
         $page = new Page;
         $page->fill($request->only('title','url','linkName','content'));
         $page->save();
 
-        if($page)
-        {
-            return redirect(route('pages'))->with('success', 'Success: '.$request->input('title').' has been added!');
-        }
+        return redirect(route('pages'))->with('success', $request->input('title').' has been added!');
     }
 
     /**
@@ -65,7 +76,7 @@ class PageController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.edit.page', ['page' => Page::find($id)->get()->first()]);
+        return view('admin.edit.page', ['page' => Page::findOrFail($id)]);
     }
 
     /**
@@ -77,12 +88,15 @@ class PageController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if($request->input('url') != $request->input('oldUrl')) {
+            $this->validate($request, [
+                'url' => 'required|unique:pages|max:255'
+            ]);
+        }
+
         $page = Page::findOrFail($id)->update($request->only('title','url','linkName','content'));
 
-        if($page)
-        {
-            return redirect(route('pages'))->with('success', 'Success: '.$request->input('title').' has been updated!');
-        }
+        return redirect(route('pages'))->with('success', $request->input('title').' has been updated!');
     }
 
     /**
@@ -94,11 +108,14 @@ class PageController extends Controller
     public function destroy($id)
     {
 
-        $page = Page::findOrFail($id)->delete();
+        $page = Page::findOrFail($id);
 
-        if($page)
-        {
-            return redirect(route('pages'))->with('success', 'Success: The page has been deleted!');
+        if ($page->url != 'Home') {
+            $page->delete();
+            return redirect(route('pages'))->with('success', 'The page has been deleted!');
+        }else{
+            return redirect(route('pages'))->with('error', 'You cannot delete the home page!');
         }
+
     }
 }
