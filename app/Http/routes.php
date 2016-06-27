@@ -15,6 +15,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::auth();
 
-Route::get('/home', 'HomeController@index');
+Route::group(['prefix' => 'dashboard'], function () {
+    Route::get('/', 'HomeController@index')->name('dashboard');
+
+    Route::get('/pages', 'Admin\PageController@index')->name('pages');
+    
+    Route::get('/addPages', 'Admin\PageController@create')->name('addPage');
+    Route::put('/postPage', 'Admin\PageController@store')->name('postPage');
+
+    Route::get('/editPage/{id}', 'Admin\PageController@edit')->name('editPage');
+    Route::put('/editPage/{id}', 'Admin\PageController@update')->name('postEditPage');
+
+    Route::get('/deletePage/{id}', 'Admin\PageController@destroy')->name('deletePage');
+});
