@@ -1,3 +1,6 @@
+## not fully working, the site's frontend layout deisgn didnt copy over last night. Will recitfy tonight when I get back.
+
+
 # Laravel PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
